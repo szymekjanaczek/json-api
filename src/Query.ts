@@ -1,15 +1,50 @@
-import Parser from './Parser.ts'
+import Parser from './Parser'
+
+interface IQueryParameters {
+    base_url?: string
+    queryParameters?: {
+        filters: string
+        fields: string
+        includes: string
+        appends: string
+        page: string
+        limit: string
+        sort: string
+    }
+}
+
+interface IFilters {
+    [key: string | number]: string | number
+}
+
+interface IParams {
+    [key: string | number]: string | number
+}
+
+interface ISortParam {
+    [key: string]: 'asc' | 'desc'
+}
 
 export default class Query {
-    constructor(options = {}) {
+    // set by calling .for(model)
+    model?: string
+    base_url: string | null = null
+    include: string[] = []
+    append: string[] = []
+    sorts: ISortParam[] = []
+    fields: string[] = []
+    filters: IFilters = {}
+    pageValue: number | null = null
+    limitValue: number | null = null
+    paramsObj: IParams = {}
+    parser: Parser
+    queryParameters
+
+    constructor(options: IQueryParameters = {}) {
         // @TODO validate options is an object
         // if (options && typeof(options) !== Object) {
         //   throw new Error('Please pass in an options object to the constructor.');
         // }
-
-        // the model to execute the query against
-        // set by calling .for(model)
-        this.model = null
 
         // will use base_url if passed in
         this.base_url = options.base_url || null
@@ -25,47 +60,37 @@ export default class Query {
             sort: 'sort'
         }
 
-        // initialise variables to hold
-        // the urls data
-        this.include = []
-        this.append = []
-        this.sorts = []
-        this.fields = {}
-        this.filters = {}
-        this.pageValue = null
-        this.limitValue = null
-        this.paramsObj = null
-
         this.parser = new Parser(this)
     }
 
     // set the model for the query
-    for(model) {
+    for(model: string): Query {
         this.model = model
 
         return this
     }
 
     // return the parsed url
-    get() {
+    get(): string {
         // generate the url
         const url = this.base_url ? this.base_url + this.parseQuery() : this.parseQuery()
         // reset the url so the query object can be re-used
         this.reset()
+
         return url
     }
 
-    url() {
+    url(): string {
         return this.get()
     }
 
-    reset() {
+    reset(): void {
         // reset the uri
         this.parser.uri = ''
     }
 
-    parseQuery() {
-        if (!this.model) {
+    parseQuery(): string {
+        if (this.model === undefined) {
             throw new Error('Please call the for() method before adding filters or calling url() / get().')
         }
 
@@ -75,103 +100,59 @@ export default class Query {
     /**
      * Query builder
      */
-    includes(...include) {
-        if (!include.length) {
-            throw new Error(`The ${this.queryParameters.includes}s() function takes at least one argument.`)
-        }
-
+    includes(...include: string[]): Query {
         this.include = include
 
         return this
     }
 
-    appends(...append) {
-        if (!append.length) {
-            throw new Error(`The ${this.queryParameters.appends}s() function takes at least one argument.`)
-        }
-
+    appends(...append: string[]): Query {
         this.append = append
 
         return this
     }
 
-    select(...fields) {
-        if (!fields.length) {
-            throw new Error(`The ${this.queryParameters.fields}() function takes a single argument of an array.`)
-        }
+    // relations by using dot as separator, e.g. 'posts.comments'
+    select (...fields: string[]): Query {
 
-        // single entity .fields(['age', 'firstname'])
-        if (fields[0].constructor === String || Array.isArray(fields[0])) {
-            this.fields = fields.join(',')
-        }
+        this.fields = fields
 
-        // related entities .fields({ posts: ['title', 'content'], user: ['age', 'firstname']} )
-        if (fields[0].constructor === Object) {
-            Object.entries(fields[0]).forEach(([key, value]) => {
-                this.fields[key] = value.join(',')
-            })
+        return this
+    }
+
+    where (key: string | number, value: string | number | null): Query {
+        if (value !== null) {
+            this.filters[key] = value
         }
 
         return this
     }
 
-    where(key, value) {
-        if (key === undefined || value === undefined)
-            throw new Error('The where() function takes 2 arguments both of string values.')
-
-        if (Array.isArray(value) || value instanceof Object)
-            throw new Error('The second argument to the where() function must be a string. Use whereIn() if you need to pass in an array.')
-
-        this.filters[key] = value
-
-        return this
-    }
-
-    whereIn(key, array) {
-        if (!key || !array) {
-            throw new Error('The whereIn() function takes 2 arguments of (string, array).')
-        }
-
-        if (!key && Array.isArray(key) || typeof key === 'object') {
-            throw new Error('The first argument for the whereIn() function must be a string or integer.')
-        }
-
-        if (!Array.isArray(array)) {
-            throw new Error('The second argument for the whereIn() function must be an array.')
-        }
-
+    whereIn (key: string | number, array: string[] | number[] | null[]): Query {
         this.filters[key] = array.join(',')
 
         return this
     }
 
-    sort(...args) {
+    sort (...args: ISortParam[]): Query {
         this.sorts = args
 
         return this
     }
 
-    page(value) {
-        if (!Number.isInteger(value)) {
-            throw new Error('The page() function takes a single argument of a number')
-        }
-
+    page (value: number): Query {
         this.pageValue = value
 
         return this
     }
 
-    limit(value) {
-        if (!Number.isInteger(value)) {
-            throw new Error('The limit() function takes a single argument of a number.')
-        }
-
+    limit (value: number): Query {
         this.limitValue = value
 
         return this
     }
 
-    params(params) {
+    params (params: IParams): Query {
         if (params === undefined || params.constructor !== Object) {
             throw new Error('The params() function takes a single argument of an object.')
         }
