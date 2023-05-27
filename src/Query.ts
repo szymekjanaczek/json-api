@@ -1,184 +1,184 @@
 import Parser from './Parser.ts'
 
 export default class Query {
-  constructor(options = {}) {
-    // @TODO validate options is an object
-    // if (options && typeof(options) !== Object) {
-    //   throw new Error('Please pass in an options object to the constructor.');
-    // }
+    constructor(options = {}) {
+        // @TODO validate options is an object
+        // if (options && typeof(options) !== Object) {
+        //   throw new Error('Please pass in an options object to the constructor.');
+        // }
 
-    // the model to execute the query against
-    // set by calling .for(model)
-    this.model = null
+        // the model to execute the query against
+        // set by calling .for(model)
+        this.model = null
 
-    // will use base_url if passed in
-    this.base_url = options.base_url || null
+        // will use base_url if passed in
+        this.base_url = options.base_url || null
 
-    // default filter names
-    this.queryParameters = options.queryParameters || {
-      filters: 'filter',
-      fields: 'fields',
-      includes: 'include',
-      appends: 'append',
-      page: 'page',
-      limit: 'limit',
-      sort: 'sort'
+        // default filter names
+        this.queryParameters = options.queryParameters || {
+            filters: 'filter',
+            fields: 'fields',
+            includes: 'include',
+            appends: 'append',
+            page: 'page',
+            limit: 'limit',
+            sort: 'sort'
+        }
+
+        // initialise variables to hold
+        // the urls data
+        this.include = []
+        this.append = []
+        this.sorts = []
+        this.fields = {}
+        this.filters = {}
+        this.pageValue = null
+        this.limitValue = null
+        this.paramsObj = null
+
+        this.parser = new Parser(this)
     }
 
-    // initialise variables to hold
-    // the urls data
-    this.include = []
-    this.append = []
-    this.sorts = []
-    this.fields = {}
-    this.filters = {}
-    this.pageValue = null
-    this.limitValue = null
-    this.paramsObj = null
+    // set the model for the query
+    for(model) {
+        this.model = model
 
-    this.parser = new Parser(this)
-  }
-
-  // set the model for the query
-  for(model) {
-    this.model = model
-
-    return this
-  }
-
-  // return the parsed url
-  get() {
-    // generate the url
-    const url = this.base_url ? this.base_url + this.parseQuery() : this.parseQuery()
-    // reset the url so the query object can be re-used
-    this.reset()
-    return url
-  }
-
-  url() {
-    return this.get()
-  }
-
-  reset() {
-    // reset the uri
-    this.parser.uri = ''
-  }
-
-  parseQuery() {
-    if (!this.model) {
-      throw new Error('Please call the for() method before adding filters or calling url() / get().')
+        return this
     }
 
-    return `/${this.model}${this.parser.parse()}`
-  }
-
-  /**
-   * Query builder
-   */
-  includes(...include) {
-    if (!include.length) {
-      throw new Error(`The ${this.queryParameters.includes}s() function takes at least one argument.`)
+    // return the parsed url
+    get() {
+        // generate the url
+        const url = this.base_url ? this.base_url + this.parseQuery() : this.parseQuery()
+        // reset the url so the query object can be re-used
+        this.reset()
+        return url
     }
 
-    this.include = include
-
-    return this
-  }
-
-  appends(...append) {
-    if (!append.length) {
-      throw new Error(`The ${this.queryParameters.appends}s() function takes at least one argument.`)
+    url() {
+        return this.get()
     }
 
-    this.append = append
-
-    return this
-  }
-
-  select(...fields) {
-    if (!fields.length) {
-      throw new Error(`The ${this.queryParameters.fields}() function takes a single argument of an array.`)
+    reset() {
+        // reset the uri
+        this.parser.uri = ''
     }
 
-    // single entity .fields(['age', 'firstname'])
-    if (fields[0].constructor === String || Array.isArray(fields[0])) {
-      this.fields = fields.join(',')
+    parseQuery() {
+        if (!this.model) {
+            throw new Error('Please call the for() method before adding filters or calling url() / get().')
+        }
+
+        return `/${this.model}${this.parser.parse()}`
     }
 
-    // related entities .fields({ posts: ['title', 'content'], user: ['age', 'firstname']} )
-    if (fields[0].constructor === Object) {
-      Object.entries(fields[0]).forEach(([key, value]) => {
-        this.fields[key] = value.join(',')
-      })
+    /**
+     * Query builder
+     */
+    includes(...include) {
+        if (!include.length) {
+            throw new Error(`The ${this.queryParameters.includes}s() function takes at least one argument.`)
+        }
+
+        this.include = include
+
+        return this
     }
 
-    return this
-  }
+    appends(...append) {
+        if (!append.length) {
+            throw new Error(`The ${this.queryParameters.appends}s() function takes at least one argument.`)
+        }
 
-  where(key, value) {
-    if (key === undefined || value === undefined)
-      throw new Error('The where() function takes 2 arguments both of string values.')
+        this.append = append
 
-    if (Array.isArray(value) || value instanceof Object)
-      throw new Error('The second argument to the where() function must be a string. Use whereIn() if you need to pass in an array.')
-
-    this.filters[key] = value
-
-    return this
-  }
-
-  whereIn(key, array) {
-    if (!key || !array) {
-      throw new Error('The whereIn() function takes 2 arguments of (string, array).')
+        return this
     }
 
-    if (!key && Array.isArray(key) || typeof key === 'object') {
-      throw new Error('The first argument for the whereIn() function must be a string or integer.')
+    select(...fields) {
+        if (!fields.length) {
+            throw new Error(`The ${this.queryParameters.fields}() function takes a single argument of an array.`)
+        }
+
+        // single entity .fields(['age', 'firstname'])
+        if (fields[0].constructor === String || Array.isArray(fields[0])) {
+            this.fields = fields.join(',')
+        }
+
+        // related entities .fields({ posts: ['title', 'content'], user: ['age', 'firstname']} )
+        if (fields[0].constructor === Object) {
+            Object.entries(fields[0]).forEach(([key, value]) => {
+                this.fields[key] = value.join(',')
+            })
+        }
+
+        return this
     }
 
-    if (!Array.isArray(array)) {
-      throw new Error('The second argument for the whereIn() function must be an array.')
+    where(key, value) {
+        if (key === undefined || value === undefined)
+            throw new Error('The where() function takes 2 arguments both of string values.')
+
+        if (Array.isArray(value) || value instanceof Object)
+            throw new Error('The second argument to the where() function must be a string. Use whereIn() if you need to pass in an array.')
+
+        this.filters[key] = value
+
+        return this
     }
 
-    this.filters[key] = array.join(',')
+    whereIn(key, array) {
+        if (!key || !array) {
+            throw new Error('The whereIn() function takes 2 arguments of (string, array).')
+        }
 
-    return this
-  }
+        if (!key && Array.isArray(key) || typeof key === 'object') {
+            throw new Error('The first argument for the whereIn() function must be a string or integer.')
+        }
 
-  sort(...args) {
-    this.sorts = args
+        if (!Array.isArray(array)) {
+            throw new Error('The second argument for the whereIn() function must be an array.')
+        }
 
-    return this
-  }
+        this.filters[key] = array.join(',')
 
-  page(value) {
-    if (!Number.isInteger(value)) {
-      throw new Error('The page() function takes a single argument of a number')
+        return this
     }
 
-    this.pageValue = value
+    sort(...args) {
+        this.sorts = args
 
-    return this
-  }
-
-  limit(value) {
-    if (!Number.isInteger(value)) {
-      throw new Error('The limit() function takes a single argument of a number.')
+        return this
     }
 
-    this.limitValue = value
+    page(value) {
+        if (!Number.isInteger(value)) {
+            throw new Error('The page() function takes a single argument of a number')
+        }
 
-    return this
-  }
+        this.pageValue = value
 
-  params(params) {
-    if (params === undefined || params.constructor !== Object) {
-      throw new Error('The params() function takes a single argument of an object.')
+        return this
     }
 
-    this.paramsObj = params
+    limit(value) {
+        if (!Number.isInteger(value)) {
+            throw new Error('The limit() function takes a single argument of a number.')
+        }
 
-    return this
-  }
+        this.limitValue = value
+
+        return this
+    }
+
+    params(params) {
+        if (params === undefined || params.constructor !== Object) {
+            throw new Error('The params() function takes a single argument of an object.')
+        }
+
+        this.paramsObj = params
+
+        return this
+    }
 
 }
