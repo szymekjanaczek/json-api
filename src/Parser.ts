@@ -27,11 +27,7 @@ export default class Parser {
         return this.uri === '' ? '?' : '&'
     }
 
-    addToUri (field?: string, value?: string): void {
-        if (field === undefined || value === undefined) {
-            return
-        }
-
+    addToUri (field: string, value: string): void {
         this.uri += this.prepend()
         this.uri += `${field}=${value}`
     }
@@ -63,6 +59,7 @@ export default class Parser {
         const fields = {
             [`${this.query.queryParameters.fields}[${this.query.model}]`]: this.query.fields.join(',')
         }
+
         this.uri += this.prepend()
         this.uri += qs.stringify(fields, {encode: false})
     }
@@ -73,7 +70,7 @@ export default class Parser {
         }
 
         const filters = {
-            [this.query.queryParameters.filters ?? '']: this.query.filters
+            [this.query.queryParameters.filters]: this.query.filters
         }
         this.uri += this.prepend()
         this.uri += qs.stringify(filters, {encode: false})

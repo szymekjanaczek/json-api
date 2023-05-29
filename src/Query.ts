@@ -35,7 +35,15 @@ export default class Query {
     limitValue?: number
     paramsObj?: IObject
     parser: Parser
-    queryParameters
+    queryParameters: {
+        filters: string
+        fields: string
+        includes: string
+        appends: string
+        page: string
+        limit: string
+        sort: string
+    }
 
     constructor(options: IQueryParameters = {}) {
         if (options.base_url) {
@@ -43,14 +51,14 @@ export default class Query {
         }
 
         // default filter names
-        this.queryParameters = options.queryParameters || {
-            filters: 'filter',
-            fields: 'fields',
-            includes: 'include',
-            appends: 'append',
-            page: 'page',
-            limit: 'limit',
-            sort: 'sort'
+        this.queryParameters = {
+            filters: options.queryParameters?.filters ?? 'filter',
+            fields: options.queryParameters?.fields ?? 'fields',
+            includes: options.queryParameters?.includes ?? 'include',
+            appends: options.queryParameters?.appends ?? 'append',
+            page: options.queryParameters?.page ?? 'page',
+            limit: options.queryParameters?.limit ?? 'limit',
+            sort: options.queryParameters?.sort ?? 'sort'
         }
 
         this.parser = new Parser(this)
@@ -146,10 +154,6 @@ export default class Query {
     }
 
     params (params: IObject): Query {
-        if (params === undefined || params.constructor !== Object) {
-            throw new Error('The params() function takes a single argument of an object.')
-        }
-
         this.paramsObj = params
 
         return this
