@@ -31,7 +31,16 @@
     "builder",
     "laravel"
   ],
-  "author": "Joel Male",
+  "authors": [
+      {
+          "name": "Szymon Janaczek",
+          "role": "Developer of the TypeScript version"
+      },
+      {
+          "name": "Joel Male",
+          "role": "Creator of the original package"
+      }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/joelwmale/cogent-js/issues"
