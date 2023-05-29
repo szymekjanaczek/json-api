@@ -1,6 +1,8 @@
 # CogentJS
 
 ## A beautiful and elegant way to build urls for your REST API
+It's the fork of the archived [joelwmale/cogent-js](https://github.com/joelwmale/cogent-js) package.
+I've updated it to support TypeScript and provided some additional changes.
 
 <a href="https://www.npmjs.com/package/cogent-js">
   <img src="https://img.shields.io/npm/v/cogent-js.svg" />
@@ -8,7 +10,7 @@
 <a href="https://travis-ci.org/joelwmale/cogent-js">
   <img src="https://travis-ci.org/joelwmale/cogent-js.svg?branch=master" />
 </a>
-<a href="https://github.com/joelwmale/js-elegant-api-query/blob/master/LICENSE">
+<a href="https://github.com/joelwmale/cogent-js/blob/master/LICENSE">
   <img src="https://img.shields.io/apm/l/vim-mode.svg" />
 </a>
 
@@ -22,7 +24,7 @@ Make a url by calling the functions you need in a beautiful and elegant way:
 
 ```js
 // Import
-const { Query } = require("cogent-js");
+import { Query } from '@simstudio/json-api-query';
 
 // If custom configuration is required, see the Additional Configuration section
 const query = new Query();
@@ -41,21 +43,21 @@ const url = query
 
 ## Npm
 
-```js
-npm i cogent-js
+```bash
+npm i @simstudio/json-api-query
 ```
 
 ## Yarn
 
-```js
-yarn add cogent-js
+```bash
+yarn add @simstudio/json-api-query
 ```
 
 # Additional Configuration
 
 ## Base Url
 
-You can optionally set the `base_url` property when instantiating the class to automatically preprend the url to all urls:
+You can optionally set the `base_url` property when instantiating the class to automatically prepend the url to all urls:
 
 ```js
 const { Query } = require('cogent-js');
@@ -159,6 +161,3 @@ const query = new Query({
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
-# Contact
-
-Twitter [@joelwmale](https://twitter.com/joelwxd)
