@@ -3,51 +3,44 @@ import Parser from '@/Parser'
 interface IQueryParameters {
     base_url?: string
     queryParameters?: {
-        filters: string
-        fields: string
-        includes: string
-        appends: string
-        page: string
-        limit: string
-        sort: string
+        filters?: string
+        fields?: string
+        includes?: string
+        appends?: string
+        page?: string
+        limit?: string
+        sort?: string
     }
 }
 
-interface IFilters {
+interface IObject {
     [key: string | number]: string | number
 }
 
-interface IParams {
-    [key: string | number]: string | number
-}
-
-interface ISortParam {
-    [key: string]: 'asc' | 'desc'
+export interface ISort {
+    field: string
+    direction?: 'asc' | 'desc'
 }
 
 export default class Query {
     // set by calling .for(model)
     model?: string
-    base_url: string | null = null
-    include: string[] = []
-    append: string[] = []
-    sorts: ISortParam[] = []
-    fields: string[] = []
-    filters: IFilters = {}
-    pageValue: number | null = null
-    limitValue: number | null = null
-    paramsObj: IParams = {}
+    base_url?: string
+    include?: string[]
+    append?: string[]
+    sorts?: ISort[]
+    fields?: string[] = []
+    filters: IObject = {}
+    pageValue?: number
+    limitValue?: number
+    paramsObj?: IObject
     parser: Parser
     queryParameters
 
     constructor(options: IQueryParameters = {}) {
-        // @TODO validate options is an object
-        // if (options && typeof(options) !== Object) {
-        //   throw new Error('Please pass in an options object to the constructor.');
-        // }
-
-        // will use base_url if passed in
-        this.base_url = options.base_url || null
+        if (options.base_url) {
+            this.base_url = options.base_url
+        }
 
         // default filter names
         this.queryParameters = options.queryParameters || {
@@ -134,7 +127,7 @@ export default class Query {
         return this
     }
 
-    sort (...args: ISortParam[]): Query {
+    sort (...args: ISort[]): Query {
         this.sorts = args
 
         return this
@@ -152,7 +145,7 @@ export default class Query {
         return this
     }
 
-    params (params: IParams): Query {
+    params (params: IObject): Query {
         if (params === undefined || params.constructor !== Object) {
             throw new Error('The params() function takes a single argument of an object.')
         }

@@ -2,9 +2,11 @@ import qs from 'qs'
 import Query, { ISort } from '@/Query'
 
 export default class Parser {
-    constructor(query) {
+    uri = ''
+    query: Query
+
+    constructor(query: Query) {
         this.query = query
-        this.uri = ''
     }
 
     // parse the final query string
@@ -21,95 +23,99 @@ export default class Parser {
         return this.uri
     }
 
-    prepend() {
+    prepend (): '?' | '&' {
         return this.uri === '' ? '?' : '&'
+    }
+
+    addToUri (field?: string, value?: string): void {
+        if (field === undefined || value === undefined) {
+            return
+        }
+
+        this.uri += this.prepend()
+        this.uri += `${field}=${value}`
     }
 
     /**
      * Parsers
      */
-    includes() {
-        if (!this.query.include.length > 0) {
+    includes (): void {
+        if (!this.query.include?.length) {
             return
         }
 
-        this.uri +=
-            `${this.prepend() +
-            this.query.queryParameters.includes
-            }=${
-                this.query.include}`
+        this.addToUri(this.query.queryParameters.includes, this.query.include.join(','))
     }
 
-    appends() {
-        if (!this.query.append.length > 0) {
+    appends (): void {
+        if (!this.query.append?.length) {
             return
         }
 
-        this.uri +=
-            `${this.prepend() +
-            this.query.queryParameters.appends
-            }=${
-                this.query.append}`
+        this.addToUri(this.query.queryParameters.appends, this.query.append.join(','))
     }
 
-    fields() {
-        if (!Object.keys(this.query.fields).length > 0) {
+    fields (): void {
+        if (!this.query.fields?.length) {
             return
         }
 
-        const fields = {[`${this.query.queryParameters.fields}[${this.query.model}]`]: this.query.fields}
-        this.uri += this.prepend() + qs.stringify(fields, {encode: false})
+        const fields = {
+            [`${this.query.queryParameters.fields}[${this.query.model}]`]: this.query.fields.join(',')
+        }
+        this.uri += this.prepend()
+        this.uri += qs.stringify(fields, {encode: false})
     }
 
-    filters() {
-        if (!Object.keys(this.query.filters).length > 0) {
+    filters (): void {
+        if (!Object.keys(this.query.filters).length) {
             return
         }
 
-        const filters = {[this.query.queryParameters.filters]: this.query.filters}
-        this.uri += this.prepend() + qs.stringify(filters, {encode: false})
+        const filters = {
+            [this.query.queryParameters.filters ?? '']: this.query.filters
+        }
+        this.uri += this.prepend()
+        this.uri += qs.stringify(filters, {encode: false})
     }
 
-    sorts() {
-        if (!this.query.sorts.length > 0) {
+    sorts (): void {
+        if (!this.query.sorts?.length) {
             return
         }
 
-        this.uri +=
-            `${this.prepend() + this.query.queryParameters.sort}=${this.query.sorts}`
+        const sortParams: string[] = []
+        this.query.sorts.forEach((sort: ISort) => {
+            const prefix = sort.direction === 'desc' ? '-' : ''
+
+            sortParams.push(`${prefix}${sort.field}`)
+        })
+
+        this.addToUri(this.query.queryParameters.sort, sortParams.join(','))
     }
 
-    page() {
-        if (this.query.pageValue === null) {
+    page (): void {
+        if (this.query.pageValue === undefined) {
             return
         }
 
-        this.uri +=
-            `${this.prepend() +
-            this.query.queryParameters.page
-            }=${
-                this.query.pageValue}`
+        this.addToUri(this.query.queryParameters.page, this.query.pageValue.toString())
     }
 
-    limit() {
-        if (this.query.limitValue === null) {
+    limit (): void {
+        if (this.query.limitValue === undefined) {
             return
         }
 
-        this.uri +=
-            `${this.prepend() +
-            this.query.queryParameters.limit
-            }=${
-                this.query.limitValue}`
+        this.addToUri(this.query.queryParameters.limit, this.query.limitValue.toString())
     }
 
-    params() {
-        if (this.query.paramsObj === null) {
+    params (): void {
+        if (!this.query.paramsObj) {
             return
         }
 
-
-        this.uri +=
-            this.prepend() + qs.stringify(this.query.paramsObj, {encode: false})
+        this.uri += this.prepend()
+        this.uri += qs.stringify(this.query.paramsObj, {encode: false})
     }
 }
