@@ -10,10 +10,6 @@
         "test": "jest",
         "test:coverage": "jest --collect-coverage"
     },
-    "jest": {
-        "coverageDirectory": "./coverage/",
-        "collectCoverage": true
-    },
     "repository": {
         "type": "git",
         "url": "git@github.com:joelwmale/cogent-js.git"
