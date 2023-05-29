@@ -2,16 +2,14 @@
 
 ## A beautiful and elegant way to build urls for your REST API
 It's the fork of the archived [joelwmale/cogent-js](https://github.com/joelwmale/cogent-js) package.
-I've updated it to support TypeScript and provided some additional changes.
+I've updated it to support TypeScript and provided some additional changes.  
+The package is fully tested.
 
-<a href="https://www.npmjs.com/package/cogent-js">
-  <img src="https://img.shields.io/npm/v/cogent-js.svg" />
-</a> 
-<a href="https://travis-ci.org/joelwmale/cogent-js">
-  <img src="https://travis-ci.org/joelwmale/cogent-js.svg?branch=master" />
+<a href="https://www.npmjs.com/@simstudio/json-api-query">
+  <img src="https://img.shields.io/npm/v/@simstudio/json-api-query.svg" />
 </a>
-<a href="https://github.com/joelwmale/cogent-js/blob/master/LICENSE">
-  <img src="https://img.shields.io/apm/l/vim-mode.svg" />
+<a href="https://github.com/@simstudio/json-api-query/blob/master/LICENSE">
+  <img src="https://img.shields.io/npm/l/@simstudio/json-api-query.svg" />
 </a>
 
 This package helps you to quickly build urls for a REST API, using fluent syntax.
@@ -60,7 +58,7 @@ yarn add @simstudio/json-api-query
 You can optionally set the `base_url` property when instantiating the class to automatically prepend the url to all urls:
 
 ```js
-const { Query } = require('cogent-js');
+import { Query } from '@simstudio/json-api-query';
 
 const query = new Query({
   base_url: 'http://api.example.com'
@@ -142,7 +140,7 @@ const url = query.for('users').params({ format: 'admin' }).url(); // or .get();
 If you need to change the default values for the query parameters, you can optionally pass in a configuration object when initializing your query object.
 
 ```js
-const { Query } = require("cogent-js");
+import { Query } from '@simstudio/json-api-query';
 
 const query = new Query({
   queryParameters: {
