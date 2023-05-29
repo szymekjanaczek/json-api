@@ -1,6 +1,6 @@
 {
   "name": "@simstudio/json-api-query",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "A simple and elegant way to build urls for your REST API",
   "main": "dist/index.js",
   "files": [
