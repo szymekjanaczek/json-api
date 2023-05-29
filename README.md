@@ -1,4 +1,4 @@
-# CogentJS
+# Json Api Query
 
 ## A beautiful and elegant way to build urls for your REST API
 It's the fork of the archived [joelwmale/cogent-js](https://github.com/joelwmale/cogent-js) package.
