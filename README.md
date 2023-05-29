@@ -32,7 +32,8 @@ const url = query
   .for('posts') // the model you're selecting
   .where('name', 'Bob') // where the models `name` is 'Bob'
   .includes('posts', 'comments') // include the models related relationships: posts and comments
-  .orderBy('-created_at') // order by -created_at desc
+  .orderBy({field: 'created_at', direction: 'desc'}) // order by -created_at desc
+  .orderBy({field: 'updated_at'}) // order by updated_at asc
   .get(); // generate the url and pass it into fetch!
 ```
 
@@ -122,7 +123,7 @@ const url = query.for('users').limit(5).page(2).url(); // or .get();
 
 ```js
 // /users?sort=-name,age
-const url = query.for('users').sort('-name', 'age').url(); // or .get();
+const url = query.for('users').sort({ field: 'name', direction: 'desc' }, { field: 'age' }).url(); // or .get();
 ```
 
 ## Custom parameters
