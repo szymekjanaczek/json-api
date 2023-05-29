@@ -1,4 +1,4 @@
-import { Query } from '../src';
+import Query from '@/Query'
 
 describe('Query builder', () => {
   test('it can override query names depending on config', () => {

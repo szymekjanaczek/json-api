@@ -1,4 +1,5 @@
 import qs from 'qs'
+import Query, { ISort } from '@/Query'
 
 export default class Parser {
     constructor(query) {
