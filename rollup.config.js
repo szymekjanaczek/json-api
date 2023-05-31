@@ -29,7 +29,6 @@ export default [
     {
         input: 'src/index.ts',
         output: {
-            dir: 'dist',
             file: pkg.module,
             format: 'esm',
             sourcemap: true,
