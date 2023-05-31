@@ -13,16 +13,16 @@ interface IQueryParameters {
     }
 }
 
-interface IObject {
+interface IParams {
     [key: string | number]: string | number
 }
 
-export interface ISort {
+interface ISort {
     field: string
     direction?: 'asc' | 'desc'
 }
 
-export default class Query {
+class Query {
     // set by calling .for(model)
     model?: string
     base_url?: string
@@ -30,10 +30,10 @@ export default class Query {
     append?: string[]
     sorts?: ISort[]
     fields?: string[] = []
-    filters: IObject = {}
+    filters: IParams = {}
     pageValue?: number
     limitValue?: number
-    paramsObj?: IObject
+    paramsObj?: IParams
     parser: Parser
     queryParameters: {
         filters: string
@@ -153,10 +153,12 @@ export default class Query {
         return this
     }
 
-    params (params: IObject): Query {
+    params (params: IParams): Query {
         this.paramsObj = params
 
         return this
     }
-
 }
+
+export { Query }
+export type { IParams, IQueryParameters, ISort }

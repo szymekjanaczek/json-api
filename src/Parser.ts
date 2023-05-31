@@ -1,5 +1,6 @@
 import qs from 'qs'
-import Query, { ISort } from '@/Query'
+import { Query } from '@/Query'
+import type { ISort } from '@/Query'
 
 export default class Parser {
     uri = ''
@@ -10,7 +11,7 @@ export default class Parser {
     }
 
     // parse the final query string
-    parse() {
+    parse(): string {
         this.includes()
         this.appends()
         this.fields()
