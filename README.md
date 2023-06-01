@@ -22,7 +22,7 @@ Make a url by calling the functions you need in a beautiful and elegant way:
 
 ```js
 // Import
-import Query from '@simstudio/json-api-query';
+import { Query } from '@simstudio/json-api-query';
 
 // If custom configuration is required, see the Additional Configuration section
 const query = new Query();
@@ -58,7 +58,7 @@ yarn add @simstudio/json-api-query
 You can optionally set the `base_url` property when instantiating the class to automatically prepend the url to all urls:
 
 ```js
-import Query from '@simstudio/json-api-query';
+import { Query } from '@simstudio/json-api-query';
 
 const query = new Query({
   base_url: 'http://api.example.com'
@@ -140,7 +140,7 @@ const url = query.for('users').params({ format: 'admin' }).url(); // or .get();
 If you need to change the default values for the query parameters, you can optionally pass in a configuration object when initializing your query object.
 
 ```js
-import Query from '@simstudio/json-api-query';
+import { Query } from '@simstudio/json-api-query';
 
 const query = new Query({
   queryParameters: {
