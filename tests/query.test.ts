@@ -1,4 +1,4 @@
-import Query from '@/Query'
+import { Query } from '../src'
 
 describe('Query builder', () => {
     test('it can override query names depending on config', () => {
@@ -38,8 +38,10 @@ describe('Query builder', () => {
             const query = new Query()
 
             query.includes('toppings').url()
-        } catch (e: any) {
-            expect(e.message).toBe('Please call the for() method before adding filters or calling url() / get().')
+        } catch (e) {
+            if (e instanceof Error) {
+                expect(e.message).toBe('Please call the for() method before adding filters or calling url() / get().')
+            }
         }
     })
 

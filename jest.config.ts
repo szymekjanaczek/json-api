@@ -17,7 +17,6 @@ export default {
         '<rootDir>/tests'
     ],
 
-    testEnvironment: 'jsdom',
     testRegex: '/tests/.*\\.(test|spec)?\\.(ts|tsx)$',
     transform: {
         '^.+\\.ts?$': 'ts-jest'

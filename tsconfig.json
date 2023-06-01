@@ -12,9 +12,6 @@
         "noFallthroughCasesInSwitch": true,
         "noImplicitReturns": true,
         "outDir": "./dist/",
-        "paths": {
-            "@/*": ["./src/*"]
-        },
         "pretty": true,
         "sourceMap": true,
         "strict": true,

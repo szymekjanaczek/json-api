@@ -1,4 +1,4 @@
-import Parser from '@/Parser'
+import Parser from './Parser'
 
 interface IQueryParameters {
     base_url?: string

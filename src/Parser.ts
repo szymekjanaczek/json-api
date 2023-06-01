@@ -1,6 +1,6 @@
 import qs from 'qs'
-import { Query } from '@/Query'
-import type { ISort } from '@/Query'
+import { Query } from './Query'
+import type { ISort } from './Query'
 
 export default class Parser {
     uri = ''
